@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="surveyPopup" class="popup">
+        <div class="popup-content">
+          <h3>問卷調查</h3>
+          <form id="surveyForm">
+            <!-- 問題區域 -->
+            <div id="question1">
+              <p>Q1. 請問...</p>
+              <label><input type="radio" name="q1" value="YES"> YES</label><br>
+              <label><input type="radio" name="q1" value="NO"> NO</label><br>
+            </div>
+            
+            <div id="question2" style="display: none;">
+              <p>Q2. 請問...</p>
+              <label><input type="radio" name="q2" value="YES"> YES</label><br>
+              <label><input type="radio" name="q2" value="NO"> NO</label><br>
+            </div>
+            
+            <div id="question3" style="display: none;">
+              <p>Q3. 請問...</p>
+              <label><input type="radio" name="q3" value="YES"> YES</label><br>
+              <label><input type="radio" name="q3" value="NO"> NO</label><br>
+            </div>
+            
+            <div id="question4" style="display: none;">
+              <p>Q4. 請問...</p>
+              <label><input type="radio" name="q4" value="YES"> YES</label><br>
+              <label><input type="radio" name="q4" value="NO"> NO</label><br>
+            </div>
+            
+            <div id="question5" style="display: none;">
+              <p>Q5. 請問...</p>
+              <label><input type="radio" name="q5" value="YES"> YES</label><br>
+              <label><input type="radio" name="q5" value="NO_A"> NO (a)</label><br>
+              <label><input type="radio" name="q5" value="NO_B"> NO (b)</label><br>
+            </div>
+            
+            <div id="question6" style="display: none;">
+              <p>Q6. 請問...</p>
+              <label><input type="radio" name="q6" value="YES"> YES</label><br>
+              <label><input type="radio" name="q6" value="NO"> NO</label><br>
+            </div>
+            
+            <!-- 結果顯示區 -->
+            <div id="result" style="display: none;">
+              <p id="resultText"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      
+      <script>
+        window.onload = function() {
+            const surveyPopup = document.getElementById("surveyPopup");
+            surveyPopup.style.display = "flex";
+          
+            const questions = {
+              q1: document.getElementById("question1"),
+              q2: document.getElementById("question2"),
+              q3: document.getElementById("question3"),
+              q4: document.getElementById("question4"),
+              q5: document.getElementById("question5"),
+              q6: document.getElementById("question6"),
+            };
+          
+            const result = document.getElementById("result");
+            const resultText = document.getElementById("resultText");
+          
+            // 問題順序及結果邏輯
+            const questionFlow = {
+              q1: { YES: "q2", NO: "q3" },
+              q2: { YES: "q4", NO: "q4" },
+              q3: { YES: "result", NO: "$25" },
+              q4: { YES: "q5", NO: "$50" },
+              q5: { YES: "$50", NO_A: "q6", NO_B: "$100+" },
+              q6: { YES: "$100+", NO: "$50" }
+            };
+          
+            // 問題切換函數
+            function showQuestion(questionId) {
+              for (let q in questions) {
+                questions[q].style.display = "none";
+              }
+              if (questionId === "result") {
+                result.style.display = "block";
+              } else {
+                questions[questionId].style.display = "block";
+              }
+            }
+          
+            // 初始顯示第一題
+            showQuestion("q1");
+          
+            // 回答事件監聽
+            for (let questionId in questionFlow) {
+              const options = document.querySelectorAll(`input[name="${questionId}"]`);
+              options.forEach(option => {
+                option.addEventListener("change", function() {
+                  const answer = option.value;
+                  const nextStep = questionFlow[questionId][answer];
+                  if (nextStep.startsWith("$")) {
+                    resultText.innerText = `您的方案價格是 ${nextStep}`;
+                    showQuestion("result");
+                  } else {
+                    showQuestion(nextStep);
+                  }
+                });
+              });
+            }
+          };
+          
+      </script>
+</body>
+</html>
